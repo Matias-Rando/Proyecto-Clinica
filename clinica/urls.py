@@ -33,4 +33,6 @@ urlpatterns = [
     path("pedidoshow/<int:pedido_id>", views.pedidoshow, name="pedidoshow"),
     path("pedidosupdate/<int:pedido_id>", views.pedidosupdate, name="pedidosupdate"),
     path("pedidosdelete/<int:pedido_id>", views.pedidosdelete, name="pedidosdelete"),
+
+    path("consulta", views.consulta, name="consulta"),
 ]

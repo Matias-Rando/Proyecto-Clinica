@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django import forms
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from .models import Paciente, Turno, Categoria, Producto, Tipopago, Estado, Pedido
+from .models import Paciente, Turno, Categoria, Producto, Tipopago, Estado, Pedido, Subpedido, Distancia, Armazon, Lado
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group, User
 from django.contrib import messages
@@ -315,6 +315,13 @@ class FormPedido(forms.Form):
     tipopago = forms.ModelChoiceField(label="Tipo de Pago:",queryset=Tipopago.objects.all(), required=True, widget=forms.Select(attrs={'class':'form-control'}))
     fechaentrega = forms.DateField(label="Fecha de Entrega:", widget=forms.DateInput(attrs={'class':'form-control','type':'date'}))
 
+class FormSubpedido(forms.Form):
+    producto = forms.ModelChoiceField(label="Producto:", queryset=Producto.objects.all(), required=True, widget=forms.Select(attrs={'class':'form-control'}))
+    cantidad = forms.IntegerField(label="Cantidad:", widget=forms.NumberInput(attrs={'class':'form-control'}))
+    lado = forms.ModelChoiceField(label="Lado:", queryset=Lado.objects.all(), required=True, widget=forms.Select(attrs={'class':'form-control', 'style':'display:none'}))
+    distancia = forms.ModelChoiceField(label="Distancia:", queryset=Distancia.objects.all(), required=True, widget=forms.Select(attrs={'class':'form-control', 'style':'display:none'}))
+    armazon = forms.ModelChoiceField(label="Armazón:", queryset=Armazon.objects.all(), required=True, widget=forms.Select(attrs={'class':'form-control', 'style':'display:none'}))
+
 def pedidoscreate(request):
     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
     if not request.user.is_authenticated:
@@ -380,9 +387,24 @@ def pedidoshow(request, pedido_id):
         return HttpResponseRedirect(reverse("login"))
 
     pedido = Pedido.objects.get(id=pedido_id)
-    return render(request, "pedidos/show.html", {
-        "pedido": pedido
-    })
+    productos = Producto.objects.all()
+    items = Subpedido.objects.filter(pedido_id=pedido_id)
+    if request.method == "POST":
+        form = FormSubpedido(request.POST)
+        if form.is_valid():
+            producto = form.cleaned_data["producto"].id
+            cantidad = form.cleaned_data["cantidad"]
+            p = Subpedido(pedido_id=pedido_id, producto_id=producto, lado_id=1, armazon_id=1, distancia_id=1, cantidad=cantidad)
+            p.save()
+            messages.success(request, 'El Item fue Agregado Exitosamente')
+        return HttpResponseRedirect(reverse("pedidosindex"))
+    else:
+        return render(request, "pedidos/show.html", {
+            "pedido": pedido,
+            "items" : items,
+            "productos": productos,
+            "form" : FormSubpedido()
+        })
 
 # Views para Autenticación:
 def index(request):
@@ -433,3 +455,16 @@ def usu(request):
         "tipousu2": request.session ["tipousuario"],
         "tipousu_id2": request.session ["tipousuario_id"]   
     })
+
+from django.http import JsonResponse
+def consulta(request, *a, **kw):
+    # Notice I didn't directly try to access request.GET["check_this"]
+    search_value = request.GET.get("check_this", None)
+    if search_value:
+        data = dict()
+        # Finding some data that you want.
+        producto = Producto.objects.get(id=search_value)
+        data["result"] = producto.categoria_id
+        # Using Django's beautiful JsonResponse class 
+        # to return your dict as JSON.
+        return JsonResponse(data)

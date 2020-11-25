@@ -39,6 +39,8 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=64)
     precio = models.IntegerField()
     detalle = models.CharField(max_length=64)
+    def __str__(self):
+        return u'{0}'.format(self.nombre)
 
 class Estado(models.Model):
     nombre = models.CharField(max_length=64)

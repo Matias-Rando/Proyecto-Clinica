@@ -12,6 +12,109 @@
             <li><strong>Total:</strong> {{ pedido.total }}</li>
             <li><strong>Tipo de Pago:</strong> {{ pedido.tipopago.nombre }}</li>
         </ul>
+
+        <h1>Items</h1>
+ 
+        <table class="table table-sm table-striped table-borderless">
+            <thead class="table-dark">
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Producto</th>
+                    <th>Precio Unitario</th>
+                    <th>Distancia Focal</th>
+                    <th>Armazon</th>
+                    <th>Lado</th>
+                    <th></th>
+                </tr>
+            </thead>
+        
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.cantidad }}</td>
+                        <td>{{ item.producto.nombre }}</td>
+                        <td>{{ item.producto.precio }}$</td>
+                        <td>{{ item.distancia }}</td>
+                        <td>{{ item.armazon }}</td>
+                        <td>{{ item.lado }}</td>
+                        <td style="width: 25%;">
+                            <a href="{% url 'pedidoshow' pedido.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
+                            <a href="{% url 'pedidosupdate' pedido.id %}" class="btn btn-primary btn-sm botones-index">Modificar</a>
+                            <a href="{% url 'pedidosdelete' pedido.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <h1>Cargar Item:</h1>
+        <form action="{% url 'pedidoshow' pedido.id %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <div class="form-group" style="margin-top: 1rem;">
+                <input type="submit", class="btn btn-primary">
+            </div>
+        </form>
+
         <a href="{% url 'pedidosindex' %}" class="btn btn-primary">Volver</a>
     </div>
+
+    <script>
+        // Esperamos a que se cargue el DOM
+        document.addEventListener('DOMContentLoaded', function() {
+             
+            $('label[for="id_lado"]').hide ();
+            $('label[for="id_distancia"]').hide ();
+            $('label[for="id_armazon"]').hide ();
+    
+            let producto = document.getElementById('id_producto');
+            producto.addEventListener('change', (event) => {
+
+                // Tomamos el Id del Producto de la lista desplegable y hademos una consulta get para obtener el id de la categoria de ese producto
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'consulta' %}",
+                    data: {
+                        "check_this": producto.value,
+                    },
+                    success: function(data){
+                        console.log("Consulta Exitosa");
+                        console.log("Categoría Id:" + data.result);
+                        if ( data.result == 1 ){
+                            // Mostramos la lista desplegable del lado
+                            document.getElementById('id_lado').style.display = 'block';
+                            $('label[for="id_lado"]').show ();
+                            // Mostramos la lista desplegable de la distancia
+                            document.getElementById('id_distancia').style.display = 'block';
+                            $('label[for="id_distancia"]').show ();
+                            // Mostramos la lista desplegable del armazon
+                            document.getElementById('id_armazon').style.display = 'block';
+                            $('label[for="id_armazon"]').show ();
+                        }else{
+                            // Ocultamos la lista desplegable del lado
+                            document.getElementById('id_lado').style.display = 'none'; 
+                            $('label[for="id_lado"]').hide ();
+                            // Ocultamos la lista desplegable de la distancia
+                            document.getElementById('id_distancia').style.display = 'none'; 
+                            $('label[for="id_distancia"]').hide ();
+                            // Ocultamos la lista desplegable del armazon
+                            document.getElementById('id_armazon').style.display = 'none'; 
+                            $('label[for="id_armazon"]').hide ();
+                        }
+                    },
+                    failure: function(data){
+                        console.log("Hubo un error en la obtención del id de la categoría");
+                    },
+                });
+            });
+        });
+    </script>
+
 {% endblock %}
+
+function muestra_oculta(id){
+    if (document.getElementById){ //se obtiene el id
+      var el = document.getElementById(id); //se define la variable "el" igual a nuestro div
+      el.style.display = (el.style.display == 'none') ? 'block' : 'none'; //damos un atributo display:none que oculta el div
+    }
+  }
