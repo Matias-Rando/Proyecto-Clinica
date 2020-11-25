@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <h1>Detalle del Pedido</h1>
+        <ul>
+            <li><strong>N°:</strong> {{pedido.id }}</li>
+            <li><strong>Fecha de Entrega:</strong> {{ pedido.fechaentrega }}</li>
+            <li><strong>Vendedor:</strong> {{ pedido.user.get_username }}</li>
+            <li><strong>Paciente:</strong> {{ pedido.paciente.nombre }}</li>
+            <li><strong>Estado:</strong> {{ pedido.estado.nombre }}</li>
+            <li><strong>Total:</strong> {{ pedido.total }}</li>
+            <li><strong>Tipo de Pago:</strong> {{ pedido.tipopago.nombre }}</li>
+        </ul>
+        <a href="{% url 'pedidosindex' %}" class="btn btn-primary">Volver</a>
+    </div>
+{% endblock %}

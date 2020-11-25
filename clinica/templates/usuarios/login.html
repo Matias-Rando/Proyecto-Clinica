@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="container" style="margin-top: 2%;">
+        {% if mensaje %}
+            <div class="alert alert-primary" role="alert" style="text-align: center;">
+                {{ mensaje }}
+            </div>
+        {% endif %}
+        {% if error %}
+            <div class="alert alert-danger" role="alert" style="text-align: center;">
+                {{ error }}
+            </div>
+        {% endif %}
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text", name="nombreusuario", placeholder="Nombre de Usuario", class="form-control">
+            </div>
+            <div class="form-group">    
+                <input type="password", name="password", placeholder="Password", class="form-control">
+            </div>
+            <div class="form-group">
+                <input type="submit", value="Acceder", class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+{% endblock %}

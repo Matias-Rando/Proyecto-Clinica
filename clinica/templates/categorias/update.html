@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="container">
+        <h1>Modificar Categoría:</h1>
+        <form action="{% url 'categoriasupdate' id %}" method="post">
+
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-group" style="margin-top: 1rem;">
+            <input type="submit", class="btn btn-primary">
+        </div>
+
+        </form>
+
+        <a href="{% url 'categoriasindex' %}" class="btn btn-primary">Volver</a>
+    </div>
+{% endblock %}

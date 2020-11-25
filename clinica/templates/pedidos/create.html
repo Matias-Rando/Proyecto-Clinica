@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="container">
+        <h1>Nuevo Pedido:</h1>
+        <form action="{% url 'pedidoscreate' %}" method="post">
+
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-group" style="margin-top: 1rem;">
+            <input type="submit", class="btn btn-primary">
+        </div>
+
+        </form>
+
+        <a href="{% url 'pedidosindex' %}" class="btn btn-primary">Ver Pedidos</a>
+    </div>
+{% endblock %}

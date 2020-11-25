@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="container">
+
+        {% if messages %}
+            <div class="alert alert-primary" role="alert" style="text-align: center;">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <h1>Categorías</h1>
+ 
+        <table class="table table-sm table-striped table-borderless">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nombre</th>
+                    <th></th>
+                </tr>
+            </thead>
+        
+            <tbody>
+                {% for categoria in categorias %}
+                    <tr>
+                        <td>{{ categoria.nombre }}</td>
+                        <td style="width: 25%;">
+                            <a href="{% url 'categoriashow' categoria.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
+                            <a href="{% url 'categoriasupdate' categoria.id %}" class="btn btn-primary btn-sm botones-index">Modificar</a>
+                            <a href="{% url 'categoriasdelete' categoria.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'categoriascreate' %}" class="btn btn-primary">Nueva Categoría</a>
+    </div>
+    
+{% endblock %}

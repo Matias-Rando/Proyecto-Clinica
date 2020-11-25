@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="container">
+
+        {% if messages %}
+            <div class="alert alert-primary" role="alert" style="text-align: center;">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <h1>Turnos</h1>
+
+        <div>
+            <form action="{% url 'turnosindex' %}" method="post" class="form-inline">
+                {% csrf_token %}
+
+                <div class="form-group mx-sm-3 mb-2">
+                    <label for="date">Fecha: </label>
+                    <input type="date" name="fecha" class="form-control" style="margin-left: 5px;">
+                </div>
+
+                <div class="form-group mx-sm-3 mb-2">
+                    <label for="mes">Mes:</label>
+                    <select name="mes" class="form-control" style="margin-left: 5px;">
+                        <option value="">Seleccione una Opción</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septimbre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+
+                <div class="form-group mx-sm-3 mb-2">
+                    <label for="year">Año:</label>
+                    <select name="year" class="form-control" style="margin-left: 5px;">
+                        <option value="">Seleccione una Opción</option>
+                        <option value="2029">2029</option>
+                        <option value="2028">2028</option>
+                        <option value="2027">2027</option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-2">
+                    <input type="submit" value="Filtrar" class="btn btn-primary botones-index">
+                </div>
+
+                <div class="form-group mb-2" style="margin-left: 5px;">
+                    <a href="{% url 'turnosindex' %}" class="btn btn-primary">Ver Todos</a>
+                </div>
+    
+            </form>
+        </div>
+        
+        <table class="table table-sm table-striped table-borderless">
+            <thead class="table-dark">
+                <tr>
+                    <th>Paciente</th>
+                    <th>Médico</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Asistio</th>
+                    <th></th>
+                </tr>
+            </thead>
+        
+            <tbody>
+                {% for turno in turnos %}
+                    <tr>
+                        <td>{{ turno.paciente.nombre }} {{ turno.paciente.apellido }}</td>
+                        <td>{{ turno.user.get_username }}</td>
+                        <td>{{ turno.fecha }}</td>
+                        <td>{{ turno.hora }}</td>
+                        <td>{{ turno.asistio }}</td>
+                        <td style="width: 25%;">
+                            <a href="{% url 'turnoshow' turno.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
+                            <a href="{% url 'turnosupdate' turno.id %}" class="btn btn-primary btn-sm botones-index">Modificar</a>
+                            <a href="{% url 'turnosdelete' turno.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'turnoscreate' %}" class="btn btn-primary">Nuevo Turno</a>
+    </div>
+    
+{% endblock %}

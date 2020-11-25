@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <h1>Pacientes</h1>
+        
+        <table class="table table-striped rounded" >
+            <thead class="table-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>DNI</th>
+                <th>Teléfono</th>
+                <th>E-Mail</th>
+                <th>Dirección</th>
+                <th>Usuario</th>
+            </tr>
+            </thead>
+        
+            <tbody>
+                {% for paciente in pacientes %}
+                    <tr>
+                    <td>{{ paciente.nombre }}</td>
+                    <td>{{ paciente.apellido }}</td>
+                    <td>{{ paciente.dni }}</td>
+                    <td>{{ paciente.telefono }}</td>
+                    <td>{{ paciente.email }}</td>
+                    <td>{{ paciente.direccion }}</td>
+                    <td>{{ paciente.user.get_username }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'pacientescargar' %}" class="btn btn-primary">Nuevo Paciente</a>
+    </div>
+    
+{% endblock %}

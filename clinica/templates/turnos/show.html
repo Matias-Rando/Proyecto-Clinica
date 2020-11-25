@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <h1>Detalle del Turno</h1>
+        <ul>
+            <li><strong>Paciente:</strong> {{ turno.paciente.nombre }} {{ turno.paciente.apellido }}</li>
+            <li><strong>Profesional Médico:</strong> {{ turno.user.get_username }}</li>
+            <li><strong>Fecha:</strong> {{ turno.fecha }}</li>
+            <li><strong>Hora:</strong> {{ turno.hora }}</li>
+            <li><strong>Asistió:</strong> {{ turno.asistio }}</li>
+        </ul>
+        <a href="{% url 'turnosindex' %}" class="btn btn-primary">Volver</a>
+    </div>
+{% endblock %}

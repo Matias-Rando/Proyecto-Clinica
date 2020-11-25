@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="container">
+
+        {% if messages %}
+            <div class="alert alert-primary" role="alert" style="text-align: center;">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <h1>Pedidos</h1>
+ 
+        <table class="table table-sm table-striped table-borderless">
+            <thead class="table-dark">
+                <tr>
+                    <th>N°</th>
+                    <th>Fecha de Entrega</th>
+                    <th>Vendedor</th>
+                    <th>Paciente</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Tipo de Pago</th>
+                    <th></th>
+                </tr>
+            </thead>
+        
+            <tbody>
+                {% for pedido in pedidos %}
+                    <tr>
+                        <td>{{ pedido.id }}</td>
+                        <td>{{ pedido.fechaentrega }}</td>
+                        <td>{{ pedido.user.get_username }}</td>
+                        <td>{{ pedido.paciente.nombre }}</td>
+                        <td>{{ pedido.estado.nombre }}</td>
+                        <td>{{ pedido.total }}$</td>
+                        <td>{{ pedido.tipopago.nombre }}</td>
+                        <td style="width: 25%;">
+                            <a href="{% url 'pedidoshow' pedido.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
+                            <a href="{% url 'pedidosupdate' pedido.id %}" class="btn btn-primary btn-sm botones-index">Modificar</a>
+                            <a href="{% url 'pedidosdelete' pedido.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'pedidoscreate' %}" class="btn btn-primary">Nuevo Pedido</a>
+    </div>
+    
+{% endblock %}
