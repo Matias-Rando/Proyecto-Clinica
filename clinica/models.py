@@ -61,3 +61,26 @@ class Pedido(models.Model):
     total = models.IntegerField()
     fechaentrega = models.DateField()
 
+class Distancia(models.Model):
+    nombre = models.CharField(max_length=64)
+    def __str__(self):
+        return u'{0}'.format(self.nombre)
+
+class Lado(models.Model):
+    nombre = models.CharField(max_length=64)
+    def __str__(self):
+        return u'{0}'.format(self.nombre)
+
+class Armazon(models.Model):
+    nombre = models.CharField(max_length=64)
+    def __str__(self):
+        return u'{0}'.format(self.nombre)
+
+class Subpedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    distancia = models.ForeignKey(Distancia, on_delete=models.CASCADE)
+    lado = models.ForeignKey(Lado, on_delete=models.CASCADE)
+    armazon = models.ForeignKey(Armazon, on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+
