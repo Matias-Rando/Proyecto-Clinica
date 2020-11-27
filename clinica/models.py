@@ -39,6 +39,8 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=64)
     precio = models.IntegerField()
     detalle = models.CharField(max_length=64)
+    def __str__(self):
+        return u'{0}'.format(self.nombre)
 
 class Estado(models.Model):
     nombre = models.CharField(max_length=64)
@@ -60,4 +62,27 @@ class Pedido(models.Model):
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE)
     total = models.IntegerField()
     fechaentrega = models.DateField()
+
+class Distancia(models.Model):
+    nombre = models.CharField(max_length=64)
+    def __str__(self):
+        return u'{0}'.format(self.nombre)
+
+class Lado(models.Model):
+    nombre = models.CharField(max_length=64)
+    def __str__(self):
+        return u'{0}'.format(self.nombre)
+
+class Armazon(models.Model):
+    nombre = models.CharField(max_length=64)
+    def __str__(self):
+        return u'{0}'.format(self.nombre)
+
+class Subpedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    distancia = models.ForeignKey(Distancia, on_delete=models.CASCADE)
+    lado = models.ForeignKey(Lado, on_delete=models.CASCADE)
+    armazon = models.ForeignKey(Armazon, on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
 
