@@ -2,6 +2,15 @@
 
 {% block body %}
     <div class="container">
+
+        {% if messages %}
+            <div class="alert alert-primary" role="alert" style="text-align: center;">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <h1>Detalle del Pedido</h1>
         <ul>
             <li><strong>N°:</strong> {{pedido.id }}</li>
@@ -9,43 +18,58 @@
             <li><strong>Vendedor:</strong> {{ pedido.user.get_username }}</li>
             <li><strong>Paciente:</strong> {{ pedido.paciente.nombre }}</li>
             <li><strong>Estado:</strong> {{ pedido.estado.nombre }}</li>
-            <li><strong>Total:</strong> {{ pedido.total }}</li>
+            <li><strong>Total:</strong> {{ pedido.total }}$</li>
             <li><strong>Tipo de Pago:</strong> {{ pedido.tipopago.nombre }}</li>
         </ul>
 
-        <h1>Items</h1>
- 
-        <table class="table table-sm table-striped table-borderless">
-            <thead class="table-dark">
-                <tr>
-                    <th>Cantidad</th>
-                    <th>Producto</th>
-                    <th>Precio Unitario</th>
-                    <th>Distancia Focal</th>
-                    <th>Armazon</th>
-                    <th>Lado</th>
-                    <th></th>
-                </tr>
-            </thead>
-        
-            <tbody>
-                {% for item in items %}
+        <a href="{% url 'pedidosupdate' pedido.id %}" class="btn btn-primary">Modificar Datos del Pedido</a>
+
+        {% if request.session.tipousuario_id == 3 %} <!-- Tipo de Usuarios Ventas-->
+            <a href="{% url 'pedidoestado' pedido.id 2 %}" class="btn btn-success">Cambiar Estado a Pedido</a>
+            <a href="{% url 'pedidoestado' pedido.id 3 %}" class="btn btn-success">Cambiar Estado a Taller</a>
+        {% endif %}
+
+        {% if request.session.tipousuario_id == 4 %} <!-- Tipo de Usuarios Taller-->
+            <a href="{% url 'pedidoestado' pedido.id 4 %}" class="btn btn-success">Cambiar Estado a Finalizado</a>
+        {% endif %}
+
+        {% if items %}
+
+            <h1>Items</h1>
+    
+            <table class="table table-sm table-striped table-borderless">
+                <thead class="table-dark">
                     <tr>
-                        <td>{{ item.cantidad }}</td>
-                        <td>{{ item.producto.nombre }}</td>
-                        <td>{{ item.producto.precio }}$</td>
-                        <td>{{ item.distancia }}</td>
-                        <td>{{ item.armazon }}</td>
-                        <td>{{ item.lado }}</td>
-                        <td style="width: 25%;">
-                            <a href="{% url 'pedidoshow' pedido.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
-                            <a href="{% url 'pedidosupdate' pedido.id %}" class="btn btn-primary btn-sm botones-index">Modificar</a>
-                            <a href="{% url 'pedidosdelete' pedido.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
-                        </td>
+                        <th>Cantidad</th>
+                        <th>Producto</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                        <th>Distancia Focal</th>
+                        <th>Armazon</th>
+                        <th>Lado</th>
+                        <th></th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+            
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>{{ item.cantidad }}</td>
+                            <td>{{ item.producto.nombre }}</td>
+                            <td>{{ item.producto.precio }}$</td>
+                            <td>{% widthratio item.producto.precio 1 item.cantidad %}$</td>
+                            <td>{{ item.distancia }}</td>
+                            <td>{{ item.armazon }}</td>
+                            <td>{{ item.lado }}</td>
+                            <td style="width: 10%;">
+                                <a href="{% url 'itemdelete' item.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% endif %}
         
         <h1>Cargar Item:</h1>
         <form action="{% url 'pedidoshow' pedido.id %}" method="post">
@@ -62,7 +86,8 @@
     <script>
         // Esperamos a que se cargue el DOM
         document.addEventListener('DOMContentLoaded', function() {
-             
+
+            // Ocultamos los labels de las listas deplegables correspondientes a la clase lentes 
             $('label[for="id_lado"]').hide ();
             $('label[for="id_distancia"]').hide ();
             $('label[for="id_armazon"]').hide ();
