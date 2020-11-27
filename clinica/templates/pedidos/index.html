@@ -21,7 +21,9 @@
                     <th>Vendedor</th>
                     <th>Paciente</th>
                     <th>Estado</th>
-                    <th>Total</th>
+                    {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no visualizan los precios -->
+                        <th>Total</th>
+                    {% endif %}
                     <th>Tipo de Pago</th>
                     <th></th>
                 </tr>
@@ -35,11 +37,15 @@
                         <td>{{ pedido.user.get_username }}</td>
                         <td>{{ pedido.paciente.nombre }}</td>
                         <td>{{ pedido.estado.nombre }}</td>
-                        <td>{{ pedido.total }}$</td>
+                        {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no visualizan los precios -->
+                            <td>{{ pedido.total }}$</td>
+                        {% endif %}
                         <td>{{ pedido.tipopago.nombre }}</td>
                         <td style="width: 20%;">
                             <a href="{% url 'pedidoshow' pedido.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
-                            <a href="{% url 'pedidosdelete' pedido.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                            {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no visualizan los precios -->
+                                <a href="{% url 'pedidosdelete' pedido.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

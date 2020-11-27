@@ -18,13 +18,14 @@
             <li><strong>Vendedor:</strong> {{ pedido.user.get_username }}</li>
             <li><strong>Paciente:</strong> {{ pedido.paciente.nombre }}</li>
             <li><strong>Estado:</strong> {{ pedido.estado.nombre }}</li>
-            <li><strong>Total:</strong> {{ pedido.total }}$</li>
+            {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no visualizan los precios -->
+                <li><strong>Total:</strong> {{ pedido.total }}$</li>
+            {% endif %}
             <li><strong>Tipo de Pago:</strong> {{ pedido.tipopago.nombre }}</li>
         </ul>
 
-        <a href="{% url 'pedidosupdate' pedido.id %}" class="btn btn-primary">Modificar Datos del Pedido</a>
-
         {% if request.session.tipousuario_id == 3 %} <!-- Tipo de Usuarios Ventas-->
+            <a href="{% url 'pedidosupdate' pedido.id %}" class="btn btn-primary">Modificar Datos del Pedido</a>
             <a href="{% url 'pedidoestado' pedido.id 2 %}" class="btn btn-success">Cambiar Estado a Pedido</a>
             <a href="{% url 'pedidoestado' pedido.id 3 %}" class="btn btn-success">Cambiar Estado a Taller</a>
         {% endif %}
@@ -42,12 +43,16 @@
                     <tr>
                         <th>Cantidad</th>
                         <th>Producto</th>
-                        <th>Precio Unitario</th>
-                        <th>Subtotal</th>
+                        {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no visualizan los precios -->
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        {% endif %}
                         <th>Distancia Focal</th>
                         <th>Armazon</th>
                         <th>Lado</th>
-                        <th></th>
+                        {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no puede eliminar items del pedido -->
+                            <th></th>
+                        {% endif %}
                     </tr>
                 </thead>
             
@@ -56,14 +61,18 @@
                         <tr>
                             <td>{{ item.cantidad }}</td>
                             <td>{{ item.producto.nombre }}</td>
-                            <td>{{ item.producto.precio }}$</td>
-                            <td>{% widthratio item.producto.precio 1 item.cantidad %}$</td>
+                            {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no visualizan los precios -->
+                                <td>{{ item.producto.precio }}$</td>
+                                <td>{% widthratio item.producto.precio 1 item.cantidad %}$</td>
+                            {% endif %}
                             <td>{{ item.distancia }}</td>
                             <td>{{ item.armazon }}</td>
                             <td>{{ item.lado }}</td>
-                            <td style="width: 10%;">
-                                <a href="{% url 'itemdelete' item.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
-                            </td>
+                            {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no puede eliminar items del pedido -->
+                                <td style="width: 10%;">
+                                    <a href="{% url 'itemdelete' item.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -71,75 +80,72 @@
 
         {% endif %}
         
-        <h1>Cargar Item:</h1>
-        <form action="{% url 'pedidoshow' pedido.id %}" method="post">
-            {% csrf_token %}
-            {{ form }}
-            <div class="form-group" style="margin-top: 1rem;">
-                <input type="submit", class="btn btn-primary">
-            </div>
-        </form>
+        {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no puede agregar items al pedido -->
+            <h1>Cargar Item:</h1>
+            <form action="{% url 'pedidoshow' pedido.id %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <div class="form-group" style="margin-top: 1rem;">
+                    <input type="submit", class="btn btn-primary">
+                </div>
+            </form>
+        {% endif %}
 
         <a href="{% url 'pedidosindex' %}" class="btn btn-primary">Volver</a>
     </div>
 
-    <script>
-        // Esperamos a que se cargue el DOM
-        document.addEventListener('DOMContentLoaded', function() {
+    {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no puede agregar items al pedido -->
+        <script>
+            // Esperamos a que se cargue el DOM
+            document.addEventListener('DOMContentLoaded', function() {
 
-            // Ocultamos los labels de las listas deplegables correspondientes a la clase lentes 
-            $('label[for="id_lado"]').hide ();
-            $('label[for="id_distancia"]').hide ();
-            $('label[for="id_armazon"]').hide ();
-    
-            let producto = document.getElementById('id_producto');
-            producto.addEventListener('change', (event) => {
+                // Ocultamos los labels de las listas deplegables correspondientes a la clase lentes 
+                $('label[for="id_lado"]').hide ();
+                $('label[for="id_distancia"]').hide ();
+                $('label[for="id_armazon"]').hide ();
+        
+                let producto = document.getElementById('id_producto');
+                producto.addEventListener('change', (event) => {
 
-                // Tomamos el Id del Producto de la lista desplegable y hademos una consulta get para obtener el id de la categoria de ese producto
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'consulta' %}",
-                    data: {
-                        "check_this": producto.value,
-                    },
-                    success: function(data){
-                        console.log("Consulta Exitosa");
-                        console.log("Categoría Id:" + data.result);
-                        if ( data.result == 1 ){
-                            // Mostramos la lista desplegable del lado
-                            document.getElementById('id_lado').style.display = 'block';
-                            $('label[for="id_lado"]').show ();
-                            // Mostramos la lista desplegable de la distancia
-                            document.getElementById('id_distancia').style.display = 'block';
-                            $('label[for="id_distancia"]').show ();
-                            // Mostramos la lista desplegable del armazon
-                            document.getElementById('id_armazon').style.display = 'block';
-                            $('label[for="id_armazon"]').show ();
-                        }else{
-                            // Ocultamos la lista desplegable del lado
-                            document.getElementById('id_lado').style.display = 'none'; 
-                            $('label[for="id_lado"]').hide ();
-                            // Ocultamos la lista desplegable de la distancia
-                            document.getElementById('id_distancia').style.display = 'none'; 
-                            $('label[for="id_distancia"]').hide ();
-                            // Ocultamos la lista desplegable del armazon
-                            document.getElementById('id_armazon').style.display = 'none'; 
-                            $('label[for="id_armazon"]').hide ();
-                        }
-                    },
-                    failure: function(data){
-                        console.log("Hubo un error en la obtención del id de la categoría");
-                    },
+                    // Tomamos el Id del Producto de la lista desplegable y hademos una consulta get para obtener el id de la categoria de ese producto
+                    $.ajax({
+                        type: "GET",
+                        url: "{% url 'consulta' %}",
+                        data: {
+                            "check_this": producto.value,
+                        },
+                        success: function(data){
+                            console.log("Consulta Exitosa");
+                            console.log("Categoría Id:" + data.result);
+                            if ( data.result == 1 ){
+                                // Mostramos la lista desplegable del lado
+                                document.getElementById('id_lado').style.display = 'block';
+                                $('label[for="id_lado"]').show ();
+                                // Mostramos la lista desplegable de la distancia
+                                document.getElementById('id_distancia').style.display = 'block';
+                                $('label[for="id_distancia"]').show ();
+                                // Mostramos la lista desplegable del armazon
+                                document.getElementById('id_armazon').style.display = 'block';
+                                $('label[for="id_armazon"]').show ();
+                            }else{
+                                // Ocultamos la lista desplegable del lado
+                                document.getElementById('id_lado').style.display = 'none'; 
+                                $('label[for="id_lado"]').hide ();
+                                // Ocultamos la lista desplegable de la distancia
+                                document.getElementById('id_distancia').style.display = 'none'; 
+                                $('label[for="id_distancia"]').hide ();
+                                // Ocultamos la lista desplegable del armazon
+                                document.getElementById('id_armazon').style.display = 'none'; 
+                                $('label[for="id_armazon"]').hide ();
+                            }
+                        },
+                        failure: function(data){
+                            console.log("Hubo un error en la obtención del id de la categoría");
+                        },
+                    });
                 });
             });
-        });
-    </script>
+        </script>
+    {% endif %}
 
 {% endblock %}
-
-function muestra_oculta(id){
-    if (document.getElementById){ //se obtiene el id
-      var el = document.getElementById(id); //se define la variable "el" igual a nuestro div
-      el.style.display = (el.style.display == 'none') ? 'block' : 'none'; //damos un atributo display:none que oculta el div
-    }
-  }
