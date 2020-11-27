@@ -474,21 +474,6 @@ def logout_view(request):
     "mensaje": "Sesión Finalizada."
     })
 
-def usu(request):
-    # Obtenemos el tipo de Usuario
-    query_set = Group.objects.filter(user = request.user)
-    for g in query_set:
-        tipousu = g.name
-        tipousu_id = g.id
-        request.session ["tipousuario"] = g.name
-        request.session ["tipousuario_id"] = g.id
-    return render(request, "usuarios/usu.html", {
-        "tipousu": tipousu,
-        "tipousu_id": tipousu_id,
-        "tipousu2": request.session ["tipousuario"],
-        "tipousu_id2": request.session ["tipousuario_id"]   
-    })
-
 def consulta(request, *a, **kw):
     # Notice I didn't directly try to access request.GET["check_this"]
     search_value = request.GET.get("check_this", None)

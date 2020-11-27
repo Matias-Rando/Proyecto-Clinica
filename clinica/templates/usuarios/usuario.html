@@ -1,11 +1,9 @@
 {% extends "layout.html" %}
 
 {% block body %}
-    <h1>Bienvenido, {{ request.user.username }}</h1>
-    <ul>
-        <li>Id de Usuario: {{ request.user.id }}</li>
-        <li>Nombre de Usuario: {{ request.user.username }}</li>
-        <li>Tipo de Usuario: {{ request.session.tipousuario }}</li>
-        <li>Email: {{ request.user.email }}</li>
-    </ul>
+    <div class="container">
+        <div class="alert alert-primary" role="alert" style="text-align: center;">
+            Bienvenido, {{ request.user.username }}
+        </div>
+    </div>
 {% endblock %}
