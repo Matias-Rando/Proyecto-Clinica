@@ -8,12 +8,16 @@ urlpatterns = [
 
     path("pacientescargar", views.pacientescargar, name="pacientescargar"),
     path("pacientesindex", views.pacientesindex, name="pacientesindex"),
+    path("pacienteshow/<int:paciente_id>", views.pacienteshow, name="pacienteshow"),
+    path("pacientesupdate/<int:paciente_id>", views.pacientesupdate, name="pacientesupdate"),
+    path("turnosdelete/<int:paciente_id>", views.pacientesdelete, name="pacientesdelete"),
 
     path("turnoscreate", views.turnoscreate, name="turnoscreate"),
     path("turnosindex", views.turnosindex, name="turnosindex"),
     path("turnoshow/<int:turno_id>", views.turnoshow, name="turnoshow"),
     path("turnosupdate/<int:turno_id>", views.turnosupdate, name="turnosupdate"),
     path("turnosdelete/<int:turno_id>", views.turnosdelete, name="turnosdelete"),
+    path("turnoasistencia/<int:turno_id><int:asistencia_id>", views.turnoasistencia, name="turnoasistencia"),
 
     path("categoriascreate", views.categoriascreate, name="categoriascreate"),
     path("categoriasindex", views.categoriasindex, name="categoriasindex"),
@@ -37,4 +41,6 @@ urlpatterns = [
     path("consulta", views.consulta, name="consulta"),
 
     path("itemdelete/<int:item_id>", views.itemdelete, name="itemdelete"),
+
+    path("reporte", views.reporte, name="reporte"),
 ]

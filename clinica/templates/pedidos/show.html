@@ -22,6 +22,7 @@
                 <li><strong>Total:</strong> {{ pedido.total }}$</li>
             {% endif %}
             <li><strong>Tipo de Pago:</strong> {{ pedido.tipopago.nombre }}</li>
+            <li><strong>Creado:</strong> {{ pedido.created_at }}</li>
         </ul>
 
         {% if request.session.tipousuario_id == 3 %} <!-- Tipo de Usuarios Ventas-->

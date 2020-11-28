@@ -18,6 +18,10 @@ class Paciente(models.Model):
     def __str__(self):
         return u'{0}'.format(self.nombre)
 
+class Asistencia(models.Model):
+    nombre = models.CharField(max_length=64)
+    def __str__(self):
+        return u'{0}'.format(self.nombre)
 
 class Turno(models.Model):
     user = models.ForeignKey(
@@ -25,9 +29,10 @@ class Turno(models.Model):
         on_delete=models.CASCADE,
     )
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
+    asistencia = models.ForeignKey(Asistencia, on_delete=models.CASCADE)
     fecha = models.DateField()
     hora = models.TimeField()
-    asistio = models.BooleanField()
+
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=64)
@@ -53,6 +58,8 @@ class Tipopago(models.Model):
         return u'{0}'.format(self.nombre)
 
 class Pedido(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

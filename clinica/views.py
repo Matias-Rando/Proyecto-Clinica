@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django import forms
 from django.urls import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from .models import Paciente, Turno, Categoria, Producto, Tipopago, Estado, Pedido, Subpedido, Distancia, Armazon, Lado
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group, User
 from django.contrib import messages
+import xlsxwriter
+import io
 
 # Create your views here.
 
@@ -33,6 +35,7 @@ def pacientescargar(request):
             direccion = form.cleaned_data["direccion"]
             email = form.cleaned_data["email"]
             p = Paciente(nombre=nombre, apellido=apellido, dni=dni, telefono=telefono, direccion=direccion, email=email, user_id=2)
+            messages.success(request, 'El Paciente fue Cargado Exitosamente')
             p.save()
         return HttpResponseRedirect(reverse("pacientesindex"))
     else:
@@ -48,6 +51,47 @@ def pacientesindex(request):
     pacientes = Paciente.objects.all()
     return render(request, "pacientes/index.html", {
         "pacientes" : pacientes
+    })
+
+def pacientesupdate(request, paciente_id):
+     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
+    paciente = Paciente.objects.get(id=paciente_id)
+    form = FormPaciente(request.POST)
+    if form.is_valid():
+        paciente.nombre = form.cleaned_data["nombre"]
+        paciente.apellido = form.cleaned_data["apellido"]
+        paciente.dni = form.cleaned_data["dni"]
+        paciente.telefono = form.cleaned_data["telefono"]
+        paciente.direccion = form.cleaned_data["direccion"]
+        paciente.email = form.cleaned_data["email"]
+        paciente.save()
+        messages.success(request, 'El Paciente fue Modificado Exitosamente')
+        return HttpResponseRedirect(reverse("pacientesindex"))
+    return render(request, 'pacientes/update.html', {
+        'id': paciente.id,
+        'form': FormPaciente(initial={'id': paciente.id, 'nombre': paciente.nombre, 'apellido': paciente.apellido, 'dni': paciente.dni, 'telefono': paciente.telefono, 'direccion': paciente.direccion,'email': paciente.email})
+    })
+
+def pacientesdelete(request, paciente_id):
+     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
+    Paciente.objects.filter(id=paciente_id).delete()
+    messages.success(request, 'El Paciente fue Eliminado Exitosamente')
+    return HttpResponseRedirect(reverse("turnosindex"))
+
+def pacienteshow(request, paciente_id):
+     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
+    paciente = Paciente.objects.get(id=paciente_id)
+    return render(request, "pacientes/show.html", {
+        "paciente": paciente
     })
 
 # Views para Turnos
@@ -70,7 +114,8 @@ def turnoscreate(request):
             fecha = form.cleaned_data["fecha"]
             hora = form.cleaned_data["hora"]
             usuario = form.cleaned_data["usuario"].id
-            p = Turno(paciente_id=paciente, fecha=fecha, hora=hora, user_id=usuario, asistio=0)
+            p = Turno(paciente_id=paciente, fecha=fecha, hora=hora, user_id=usuario, asistencia_id=1)
+            messages.success(request, 'El Turno fue Creado Exitosamente')
             p.save()
         return HttpResponseRedirect(reverse("turnosindex"))
     else:
@@ -91,10 +136,11 @@ def turnosupdate(request, turno_id):
         turno.hora = form.cleaned_data["hora"]
         turno.user_id = form.cleaned_data["usuario"].id
         turno.save()
+        messages.success(request, 'El Turno fue Modificado Exitosamente')
         return HttpResponseRedirect(reverse("turnosindex"))
     return render(request, 'turnos/update.html', {
         'id': turno.id,
-        'form': FormTurno(initial={'id': turno.id, 'paciente': turno.paciente_id, 'usuario': turno.user_id, 'fecha': turno.fecha, 'hora': turno.hora, 'asistio': turno.asistio})
+        'form': FormTurno(initial={'id': turno.id, 'paciente': turno.paciente_id, 'usuario': turno.user_id, 'fecha': turno.fecha, 'hora': turno.hora})
     })
 
 def turnosdelete(request, turno_id):
@@ -161,6 +207,17 @@ def turnoshow(request, turno_id):
     return render(request, "turnos/show.html", {
         "turno": turno
     })
+
+def turnoasistencia(request, turno_id, asistencia_id):
+     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
+    turno = Turno.objects.get(id=turno_id)
+    turno.asistencia_id = asistencia_id
+    turno.save()   
+    messages.success(request, f"El estado de Asistencia del Turno cambio a {turno.asistencia.nombre}.")
+    return redirect('turnoshow', turno.id)
 
 # Views para Categorias
 class FormCategoria(forms.Form):
@@ -370,8 +427,6 @@ def pedidosdelete(request, pedido_id):
     messages.success(request, 'El Pedido fue Eliminado Exitosamente')
     return HttpResponseRedirect(reverse("pedidosindex"))
 
-
-
 def pedidosindex(request):
     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
     if not request.user.is_authenticated:
@@ -381,7 +436,6 @@ def pedidosindex(request):
     return render(request, "pedidos/index.html", {
         "pedidos" : pedidos
     })
-
 
 def pedidoshow(request, pedido_id):
      # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
@@ -485,3 +539,38 @@ def consulta(request, *a, **kw):
         # Using Django's beautiful JsonResponse class 
         # to return your dict as JSON.
         return JsonResponse(data)
+
+def reporte(request):
+    turnos = Turno.objects.filter(fecha__month=mes)
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+
+    worksheet.write(0, 0, 'Nombre')
+    worksheet.write(0, 1, 'Apellido')
+    pacientes = Paciente.objects.all()
+    i = 1
+    for paciente in pacientes:
+        worksheet.write(i, 0, paciente.nombre)
+        i = i + 1
+    i = 1
+    for paciente in pacientes:
+        worksheet.write(i, 1, paciente.apellido)
+        i = i + 1
+    #for row_num, columns in enumerate(data):
+    #    for col_num, cell_data in enumerate(columns):
+    #        worksheet.write(row_num, col_num, cell_data)
+    #worksheet.write('A1', 'Hello world')
+        # Close the workbook before sending the data.
+    workbook.close()
+        # Rewind the buffer.
+    output.seek(0)
+        # Set up the Http response.
+    filename = 'Reporte.xlsx'
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    return response

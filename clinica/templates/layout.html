@@ -36,6 +36,14 @@
                                         </div>
                                     </li>
                                 {% endif %}
+                                {% if request.user.id %}
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Reportes</a>
+                                        <div class="dropdown-menu">
+                                            <a href="{% url 'reporte' %}" class="dropdown-item">Pacientes que asistieron a los turnos en la semana</a>
+                                        </div>
+                                    </li>
+                                {% endif %}
                             {% endif %}
                         </ul>
                         <!--lado derecho-->

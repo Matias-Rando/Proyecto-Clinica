@@ -2,9 +2,18 @@
 
 {% block body %}
     <div class="container">
+
+        {% if messages %}
+            <div class="alert alert-primary" role="alert" style="text-align: center;">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <h1>Pacientes</h1>
         
-        <table class="table table-striped rounded" >
+        <table class="table table-sm table-striped table-borderless" >
             <thead class="table-dark">
             <tr>
                 <th>Nombre</th>
@@ -14,6 +23,7 @@
                 <th>E-Mail</th>
                 <th>Dirección</th>
                 <th>Usuario</th>
+                <th></th>
             </tr>
             </thead>
         
@@ -27,6 +37,11 @@
                     <td>{{ paciente.email }}</td>
                     <td>{{ paciente.direccion }}</td>
                     <td>{{ paciente.user.get_username }}</td>
+                    <td style="width: 25%;">
+                        <a href="{% url 'pacienteshow' paciente.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
+                        <a href="{% url 'pacientesupdate' paciente.id %}" class="btn btn-primary btn-sm botones-index">Modificar</a>
+                        <a href="{% url 'pacientesdelete' paciente.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                    </td>
                     </tr>
                 {% endfor %}
             </tbody>

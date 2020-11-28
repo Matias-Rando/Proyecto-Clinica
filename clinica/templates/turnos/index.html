@@ -76,7 +76,7 @@
                     <th>Médico</th>
                     <th>Fecha</th>
                     <th>Hora</th>
-                    <th>Asistio</th>
+                    <th>Asistencia</th>
                     <th></th>
                 </tr>
             </thead>
@@ -88,7 +88,7 @@
                         <td>{{ turno.user.get_username }}</td>
                         <td>{{ turno.fecha }}</td>
                         <td>{{ turno.hora }}</td>
-                        <td>{{ turno.asistio }}</td>
+                        <td>{{ turno.asistencia.nombre }}</td>
                         <td style="width: 25%;">
                             <a href="{% url 'turnoshow' turno.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
                             <a href="{% url 'turnosupdate' turno.id %}" class="btn btn-primary btn-sm botones-index">Modificar</a>

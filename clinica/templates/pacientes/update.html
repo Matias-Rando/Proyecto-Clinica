@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="container">
+        <h1>Modificar Paciente:</h1>
+        <form action="{% url 'pacientesupdate' id %}" method="post">
+
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-group" style="margin-top: 1rem;">
+            <input type="submit", class="btn btn-primary">
+        </div>
+
+        </form>
+
+        <a href="{% url 'pacientesindex' %}" class="btn btn-primary">Volver</a>
+    </div>
+{% endblock %}
