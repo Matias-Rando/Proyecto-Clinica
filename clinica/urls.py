@@ -42,5 +42,6 @@ urlpatterns = [
 
     path("itemdelete/<int:item_id>", views.itemdelete, name="itemdelete"),
 
-    path("reporte", views.reporte, name="reporte"),
+    path("reportepacientes/<int:asistencia_id><int:rango>", views.reportepacientes, name="reportepacientes"),
+    path("reportepacientespedidos/<int:rango>", views.reportepacientespedidos, name="reportepacientespedidos"),
 ]

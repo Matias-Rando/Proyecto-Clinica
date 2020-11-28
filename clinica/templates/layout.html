@@ -40,7 +40,12 @@
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Reportes</a>
                                         <div class="dropdown-menu">
-                                            <a href="{% url 'reporte' %}" class="dropdown-item">Pacientes que asistieron a los turnos en la semana</a>
+                                            <a href="{% url 'reportepacientes' 2 1 %}" class="dropdown-item">Pacientes que asistieron a los turnos en la semana</a>
+                                            <a href="{% url 'reportepacientes' 2 2 %}" class="dropdown-item">Pacientes que asistieron a los turnos en el mes</a>
+                                            <a href="{% url 'reportepacientes' 3 1 %}" class="dropdown-item">Pacientes que no asistieron a los turnos en la semana</a>
+                                            <a href="{% url 'reportepacientes' 3 2 %}" class="dropdown-item">Pacientes que no asistieron a los turnos en el mes</a>
+                                            <a href="{% url 'reportepacientespedidos' 1 %}" class="dropdown-item">Pacientes que hicieron pedidos en la semana</a>
+                                            <a href="{% url 'reportepacientespedidos' 2 %}" class="dropdown-item">Pacientes que hicieron pedidos en el mes</a>
                                         </div>
                                     </li>
                                 {% endif %}

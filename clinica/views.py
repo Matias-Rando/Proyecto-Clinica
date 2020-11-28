@@ -8,6 +8,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib import messages
 import xlsxwriter
 import io
+from datetime import date, timedelta
 
 # Create your views here.
 
@@ -540,32 +541,90 @@ def consulta(request, *a, **kw):
         # to return your dict as JSON.
         return JsonResponse(data)
 
-def reporte(request):
-    turnos = Turno.objects.filter(fecha__month=mes)
+def reportepacientes(request, asistencia_id, rango):
+    hoy = date.today()
+    if rango == 1:
+        fechaInicial = hoy - timedelta(days=7) # Una semana de rango
+    if rango == 2:
+         fechaInicial = hoy - timedelta(days=30) # Un mes de rango
+    turnos = Turno.objects.filter(fecha__range=(fechaInicial, hoy), asistencia_id= asistencia_id)
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)
     worksheet = workbook.add_worksheet()
 
     worksheet.write(0, 0, 'Nombre')
     worksheet.write(0, 1, 'Apellido')
-    pacientes = Paciente.objects.all()
+    worksheet.write(0, 2, 'Fecha')
+    worksheet.write(0, 3, 'Hora')
+    worksheet.write(0, 4, 'Médico')
+    
     i = 1
-    for paciente in pacientes:
-        worksheet.write(i, 0, paciente.nombre)
+    for turno in turnos:
+        worksheet.write(i, 0, turno.paciente.nombre)
         i = i + 1
     i = 1
-    for paciente in pacientes:
-        worksheet.write(i, 1, paciente.apellido)
+    for turno in turnos:
+        worksheet.write(i, 1, turno.paciente.apellido)
         i = i + 1
-    #for row_num, columns in enumerate(data):
-    #    for col_num, cell_data in enumerate(columns):
-    #        worksheet.write(row_num, col_num, cell_data)
-    #worksheet.write('A1', 'Hello world')
-        # Close the workbook before sending the data.
+    i = 1
+    for turno in turnos:
+        worksheet.write(i, 2, str(turno.fecha))
+        i = i + 1
+    i = 1
+    for turno in turnos:
+        worksheet.write(i, 3, str(turno.hora))
+        i = i + 1
+    i = 1
+    for turno in turnos:
+        worksheet.write(i, 4, turno.user.get_username())
+        i = i + 1
+    
     workbook.close()
-        # Rewind the buffer.
     output.seek(0)
-        # Set up the Http response.
+    filename = 'Reporte.xlsx'
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    return response
+
+def reportepacientespedidos(request, rango):
+    hoy = date.today()
+    if rango == 1:
+        fechaInicial = hoy - timedelta(days=7) # Una semana de rango
+    if rango == 2:
+         fechaInicial = hoy - timedelta(days=30) # Un mes de rango
+    pedidos = Pedido.objects.filter(created_at__range=(fechaInicial, hoy))
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+
+    worksheet.write(0, 0, 'Nombre')
+    worksheet.write(0, 1, 'Apellido')
+    worksheet.write(0, 2, 'N° de Pedido')
+    worksheet.write(0, 3, 'Vendedor')
+    
+    i = 1
+    for pedido in pedidos:
+        worksheet.write(i, 0, pedido.paciente.nombre)
+        i = i + 1
+    i = 1
+    for pedido in pedidos:
+        worksheet.write(i, 1, pedido.paciente.apellido)
+        i = i + 1
+    i = 1
+    for pedido in pedidos:
+        worksheet.write(i, 2, pedido.id)
+        i = i + 1
+    i = 1
+    for pedido in pedidos:
+        worksheet.write(i, 3, pedido.user.get_username())
+        i = i + 1
+    
+    workbook.close()
+    output.seek(0)
     filename = 'Reporte.xlsx'
     response = HttpResponse(
         output,
