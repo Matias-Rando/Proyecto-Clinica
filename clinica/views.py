@@ -633,3 +633,52 @@ def reportepacientespedidos(request, rango):
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
     return response
+
+def reporteproductos(request):
+    hoy = date.today()
+    fechaInicial = hoy - timedelta(days=30) # Un mes de rango
+    pedidos = Pedido.objects.filter(created_at__range=(fechaInicial, hoy))
+    productos = Producto.objects.all()
+    ultimoProducto = Producto.objects.last()
+    total = [0] * ultimoProducto.id
+    total2 = [0] * ultimoProducto.id
+    for producto in productos:
+        total[(producto.id)-1] = 0
+        for pedido in pedidos:
+            subpedidos = Subpedido.objects.filter(pedido_id=pedido.id, producto_id=producto.id)
+            for subpedido in subpedidos:
+                total[(producto.id)-1] = total[(producto.id)-1] + subpedido.cantidad
+            total2[(producto.id)-1] = [producto.nombre, total[(producto.id)-1]]
+
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+
+    worksheet.write(0, 0, 'Nombre')
+    worksheet.write(0, 1, 'Cantidad')
+    
+    
+    def takeSecond(elem):
+        return elem[1]
+    total2.sort(key=takeSecond, reverse=True)
+        
+    i = 0
+    for j in total2:
+        worksheet.write(i+1, 0, total2[i][0])
+        i = i + 1
+    
+    i = 0
+    for j in total2:
+        worksheet.write(i+1, 1, total2[i][1])
+        i = i + 1
+    
+    workbook.close()
+    output.seek(0)
+    filename = 'Reporte.xlsx'
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    return response
