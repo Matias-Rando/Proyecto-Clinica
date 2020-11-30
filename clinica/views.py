@@ -682,3 +682,50 @@ def reporteproductos(request):
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
     return response
+
+def reporteventas(request):
+    hoy = date.today()
+    fechaInicial = hoy - timedelta(days=30) # Un mes de rango
+    pedidos = Pedido.objects.filter(created_at__range=(fechaInicial, hoy))
+    ususventas = User.objects.filter(groups__name='Ventas')
+    dimension = ususventas.count()
+    total = [0] * dimension
+    i = 0
+    for usuventas in ususventas:
+        pedidos = Pedido.objects.filter(user_id=usuventas.id)
+        conteo = pedidos.count()
+        total[i] = [usuventas.username, conteo]
+        i = i + 1
+
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+
+    worksheet.write(0, 0, 'Vendedor')
+    worksheet.write(0, 1, 'Cantidad de Ventas')
+    
+    
+    def takeSecond(elem):
+        return elem[1]
+    total.sort(key=takeSecond, reverse=True)
+        
+    i = 0
+    for j in total:
+        worksheet.write(i+1, 0, total[i][0])
+        i = i + 1
+    
+    i = 0
+    for j in total:
+        worksheet.write(i+1, 1, total[i][1])
+        i = i + 1
+    
+    workbook.close()
+    output.seek(0)
+    filename = 'Reporte.xlsx'
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    return response

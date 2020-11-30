@@ -45,4 +45,5 @@ urlpatterns = [
     path("reportepacientes/<int:asistencia_id><int:rango>", views.reportepacientes, name="reportepacientes"),
     path("reportepacientespedidos/<int:rango>", views.reportepacientespedidos, name="reportepacientespedidos"),
     path("reporteproductos", views.reporteproductos, name="reporteproductos"),
+    path("reporteventas", views.reporteventas, name="reporteventas"),
 ]
