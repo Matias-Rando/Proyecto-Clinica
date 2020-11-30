@@ -10,7 +10,11 @@ urlpatterns = [
     path("pacientesindex", views.pacientesindex, name="pacientesindex"),
     path("pacienteshow/<int:paciente_id>", views.pacienteshow, name="pacienteshow"),
     path("pacientesupdate/<int:paciente_id>", views.pacientesupdate, name="pacientesupdate"),
-    path("turnosdelete/<int:paciente_id>", views.pacientesdelete, name="pacientesdelete"),
+    path("pacientesdelete/<int:paciente_id>", views.pacientesdelete, name="pacientesdelete"),
+
+    path("historialshow/<int:historial_id>", views.historialshow, name="historialshow"),
+    path("historialupdate/<int:historial_id>", views.historialupdate, name="historialupdate"),
+    path("historialdelete/<int:historial_id>", views.historialdelete, name="historialdelete"),
 
     path("turnoscreate", views.turnoscreate, name="turnoscreate"),
     path("turnosindex", views.turnosindex, name="turnosindex"),

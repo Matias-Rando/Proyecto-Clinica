@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <h1>Detalle del Registro del Historial</h1>
+        <ul>
+            <li><strong>Título:</strong> {{ historial.titulo }}</li>
+            <li><strong>Creado:</strong> {{ historial.created_at }}</li>
+            <li><strong>Detalle:</strong> {{ historial.detalle }}</li>
+        </ul>
+        <a href="{% url 'pacienteshow' historial.paciente_id %}" class="btn btn-primary">Volver</a>
+    </div>
+{% endblock %}

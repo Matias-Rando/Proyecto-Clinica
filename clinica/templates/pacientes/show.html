@@ -2,6 +2,15 @@
 
 {% block body %}
     <div class="container">
+
+        {% if messages %}
+            <div class="alert alert-primary" role="alert" style="text-align: center;">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <h1>Detalle del Paciente</h1>
         <ul>
             <li><strong>Nombre:</strong> {{ paciente.nombre }}</li>
@@ -13,5 +22,47 @@
             <li><strong>Ingresado por:</strong> {{ paciente.user.get_username }}</li>
         </ul>
         <a href="{% url 'pacientesindex' %}" class="btn btn-primary">Volver</a>
+
+        {% if historiales %}
+
+            <h1>Historial</h1>
+    
+            <table class="table table-sm table-striped table-borderless">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Título</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for historial in historiales %}
+                        <tr>
+                            <td>{{ historial.created_at }}</td>
+                            <td>{{ historial.titulo }}</td>
+                            <td style="width: 25%;">
+                                <a href="{% url 'historialshow' historial.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
+                                <a href="{% url 'historialupdate' historial.id %}" class="btn btn-primary btn-sm botones-index">Modificar</a>
+                                <a href="{% url 'historialdelete' historial.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% endif %}
+        
+        {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no puede agregar items al pedido -->
+            <h1>Añadir Registro al Historial:</h1>
+            <form action="{% url 'pacienteshow' paciente.id %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <div class="form-group" style="margin-top: 1rem;">
+                    <input type="submit", class="btn btn-primary">
+                </div>
+            </form>
+        {% endif %}
+
     </div>
 {% endblock %}

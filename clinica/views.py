@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django import forms
 from django.urls import reverse
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from .models import Paciente, Turno, Categoria, Producto, Tipopago, Estado, Pedido, Subpedido, Distancia, Armazon, Lado
+from .models import Paciente, Turno, Categoria, Producto, Tipopago, Estado, Pedido, Subpedido, Distancia, Armazon, Lado, Historial
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group, User
 from django.contrib import messages
@@ -20,6 +20,10 @@ class FormPaciente(forms.Form):
     telefono = forms.CharField(label="Teléfono:", widget=forms.TextInput(attrs={'class':'form-control'}))
     direccion = forms.CharField(label="Dirección:", widget=forms.TextInput(attrs={'class':'form-control'}))
     email = forms.CharField(label="E-Mail", widget=forms.TextInput(attrs={'class':'form-control'}))
+
+class FormHistorial(forms.Form):
+    titulo = forms.CharField(label="Título:", widget=forms.TextInput(attrs={'class':'form-control'}))
+    detalle = forms.CharField(label="Apellido:", widget=forms.Textarea(attrs={'class':'form-control'}))
 
 def pacientescargar(request):
     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
@@ -81,7 +85,7 @@ def pacientesdelete(request, paciente_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
 
-    Paciente.objects.filter(id=paciente_id).delete()
+    Paciente.objects.get(id=paciente_id).delete()
     messages.success(request, 'El Paciente fue Eliminado Exitosamente')
     return HttpResponseRedirect(reverse("turnosindex"))
 
@@ -91,8 +95,62 @@ def pacienteshow(request, paciente_id):
         return HttpResponseRedirect(reverse("login"))
 
     paciente = Paciente.objects.get(id=paciente_id)
-    return render(request, "pacientes/show.html", {
-        "paciente": paciente
+    historiales = Historial.objects.filter(paciente_id=paciente_id)
+    if request.method == "POST":
+        form = FormHistorial(request.POST)
+        if form.is_valid():
+            titulo = form.cleaned_data["titulo"]
+            detalle = form.cleaned_data["detalle"]
+            p = Historial(paciente_id=paciente_id, user_id=request.user.id, titulo=titulo, detalle=detalle)
+            p.save()
+            messages.success(request, 'El Registro fue Agregado Exitosamente')
+            return redirect('pacienteshow', paciente_id)
+    else:
+        return render(request, "pacientes/show.html", {
+            "paciente": paciente,
+            "historiales": historiales,
+            "form" : FormHistorial()
+        })
+
+# Views para Historiales
+def historialupdate(request, historial_id):
+     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
+    historial = Historial.objects.get(id=historial_id)
+    form = FormHistorial(request.POST)
+    if form.is_valid():
+        historial.titulo = form.cleaned_data["titulo"]
+        historial.detalle = form.cleaned_data["detalle"]
+        historial.save()
+        messages.success(request, 'El Registro fue modificado Exitosamente')
+        return redirect('pacienteshow', historial.paciente_id)
+    return render(request, 'historiales/update.html', {
+        'id': historial.id,
+        'paciente_id': historial.paciente_id,
+        'form': FormHistorial(initial={'id': historial.id, 'titulo': historial.titulo, 'detalle': historial.detalle})
+    })
+
+def historialdelete(request, historial_id):
+     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
+    historial = Historial.objects.get(id=historial_id)
+    paciente_id = historial.paciente_id
+    historial.delete()
+    messages.success(request, 'El Registro fue Eliminado Exitosamente')
+    return redirect('pacienteshow', paciente_id)
+
+def historialshow(request, historial_id):
+     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
+    historial = Historial.objects.get(id=historial_id)
+    return render(request, "historiales/show.html", {
+        "historial": historial
     })
 
 # Views para Turnos
@@ -149,7 +207,7 @@ def turnosdelete(request, turno_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
 
-    Turno.objects.filter(id=turno_id).delete()
+    Turno.objects.get(id=turno_id).delete()
     messages.success(request, 'El Turno fue Eliminado Exitosamente')
     return HttpResponseRedirect(reverse("turnosindex"))
 
@@ -264,7 +322,7 @@ def categoriasdelete(request, categoria_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
 
-    Categoria.objects.filter(id=categoria_id).delete()
+    Categoria.objects.get(id=categoria_id).delete()
     messages.success(request, 'La Categoría fue Eliminada Exitosamente')
     return HttpResponseRedirect(reverse("categoriasindex"))
 
@@ -342,7 +400,7 @@ def productosdelete(request, producto_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
 
-    Producto.objects.filter(id=producto_id).delete()
+    Producto.objects.get(id=producto_id).delete()
     messages.success(request, 'El Producto fue Eliminado Exitosamente')
     return HttpResponseRedirect(reverse("productosindex"))
 
@@ -424,7 +482,7 @@ def pedidosdelete(request, pedido_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
 
-    Pedido.objects.filter(id=pedido_id).delete()
+    Pedido.objects.get(id=pedido_id).delete()
     messages.success(request, 'El Pedido fue Eliminado Exitosamente')
     return HttpResponseRedirect(reverse("pedidosindex"))
 

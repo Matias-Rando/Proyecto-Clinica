@@ -93,3 +93,13 @@ class Subpedido(models.Model):
     armazon = models.ForeignKey(Armazon, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
 
+class Historial(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    titulo = models.CharField(max_length=64)
+    detalle = models.TextField()

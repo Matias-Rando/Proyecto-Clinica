@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="container">
+        <h1>Modificar Registro del Historial:</h1>
+        <form action="{% url 'historialupdate' id %}" method="post">
+
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-group" style="margin-top: 1rem;">
+            <input type="submit", class="btn btn-primary">
+        </div>
+
+        </form>
+
+        <a href="{% url 'pacienteshow' paciente_id %}" class="btn btn-primary">Volver</a>
+    </div>
+{% endblock %}
