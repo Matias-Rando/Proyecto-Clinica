@@ -256,7 +256,6 @@ def turnosindex(request):
             "turnos" : turnos
         })
 
-
 def turnoshow(request, turno_id):
      # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
     if not request.user.is_authenticated:
@@ -413,7 +412,6 @@ def productosindex(request):
     return render(request, "productos/index.html", {
         "productos" : productos
     })
-
 
 def productoshow(request, producto_id):
      # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
@@ -588,15 +586,11 @@ def logout_view(request):
     })
 
 def consulta(request, *a, **kw):
-    # Notice I didn't directly try to access request.GET["check_this"]
     search_value = request.GET.get("check_this", None)
     if search_value:
         data = dict()
-        # Finding some data that you want.
         producto = Producto.objects.get(id=search_value)
         data["result"] = producto.categoria_id
-        # Using Django's beautiful JsonResponse class 
-        # to return your dict as JSON.
         return JsonResponse(data)
 
 def reportepacientes(request, asistencia_id, rango):
