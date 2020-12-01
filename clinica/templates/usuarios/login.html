@@ -12,17 +12,26 @@
                 {{ error }}
             </div>
         {% endif %}
-        <form action="{% url 'login' %}" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <input type="text", name="nombreusuario", placeholder="Nombre de Usuario", class="form-control">
-            </div>
-            <div class="form-group">    
-                <input type="password", name="password", placeholder="Password", class="form-control">
-            </div>
-            <div class="form-group">
-                <input type="submit", value="Acceder", class="btn btn-primary">
-            </div>
-        </form>
+        <div class="d-flex justify-content-center">
+        <div class="formulario" style="text-align: center;">
+            <div class="m-3">
+                {% load static %}
+                <img style="width: 90px; height: 90px;" src="{% static 'images/icon.png' %}" alt="Icono Login">
+            </div>    
+            <h2>Ingreso</h2>
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text", name="nombreusuario", placeholder="Nombre de Usuario", class="form-control">
+                </div>
+                <div class="form-group">    
+                    <input type="password", name="password", placeholder="Password", class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="submit", value="Acceder", class="btn btn-primary btn-block">
+                </div>
+            </form>
+        </div>
+    </div>
     </div>
 {% endblock %}
