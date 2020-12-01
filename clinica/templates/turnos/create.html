@@ -1,17 +1,16 @@
 {% extends "layout.html" %}
 {% block body %}
     <div class="container">
-        <h1>Nuevo Turno:</h1>
-        <form action="{% url 'turnoscreate' %}" method="post">
-
-        {% csrf_token %}
-        {{ form }}
-        <div class="form-group" style="margin-top: 1rem;">
-            <input type="submit", class="btn btn-primary">
+        <div class="formulario">
+            <h1>Nuevo Turno:</h1>
+            <form action="{% url 'turnoscreate' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <div class="form-group" style="margin-top: 1rem;">
+                    <input type="submit", class="btn btn-primary">
+                    <a href="{% url 'turnosindex' %}" class="btn btn-secondary">Volver</a>
+                </div>
+            </form>      
         </div>
-
-        </form>
-
-        <a href="{% url 'turnosindex' %}" class="btn btn-primary">Ver Turnos</a>
     </div>
 {% endblock %}

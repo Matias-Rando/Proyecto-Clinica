@@ -10,7 +10,7 @@
                 {% endfor %}
             </div>
         {% endif %}
-
+        <div class="muestra">
         <h1>Detalle del Turno</h1>
         <ul>
             <li><strong>Paciente:</strong> {{ turno.paciente.nombre }} {{ turno.paciente.apellido }}</li>
@@ -26,6 +26,6 @@
             <a href="{% url 'turnoasistencia' turno.id 2 %}" class="btn btn-success">Cambiar Estado a Si Asistió</a>
             <a href="{% url 'turnoasistencia' turno.id 3 %}" class="btn btn-danger">Cambiar Estado a No Asistió</a>
         {% endif %}
-
+    </div>
     </div>
 {% endblock %}
