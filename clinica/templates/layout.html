@@ -22,21 +22,57 @@
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <ul class="navbar-nav mr-auto">
                             {% if request.user.id %}
-                                <li class="nav-item">
-                                    <a href="{% url 'turnosindex' %}" class="nav-item nav-link">Ver Turnos</a>
-                                </li>
-                                {% if request.user.id %}
+                                {% if request.session.tipousuario_id == 4  %} <!-- El tipo de Usuario taller solo ve el index de pedidos, no puede crearlos -->
+                                    <li class="nav-item">
+                                        <a href="{% url 'pedidosindex' %}" class="nav-item nav-link">Ver Pedidos</a>
+                                    </li>
+                                {% endif %}
+                                {% if request.session.tipousuario_id == 1 or request.session.tipousuario_id == 5 %} <!-- Pacientes: Tipo de Usuarios Secretaría y Gerencia-->
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Menu</a>
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Pacientes</a>
                                         <div class="dropdown-menu">
-                                            <a href="{% url 'categoriasindex' %}" class="dropdown-item">Categorias</a>
-                                            <a href="{% url 'productosindex' %}" class="dropdown-item">Productos</a>
-                                            <a href="{% url 'pedidosindex' %}" class="dropdown-item">Pedidos</a>
-                                            <a href="{% url 'pacientesindex' %}" class="dropdown-item">Pacientes</a>
+                                            <a href="{% url 'pacientesindex' %}" class="dropdown-item">Ver Pacientes</a>
+                                            <a href="{% url 'pacientescargar' %}" class="dropdown-item">Nuevo Paciente</a>
                                         </div>
                                     </li>
                                 {% endif %}
-                                {% if request.user.id %}
+                                {% if request.session.tipousuario_id == 1 or request.session.tipousuario_id == 2 or request.session.tipousuario_id == 5 %} <!-- Turnos: Tipo de Usuarios Secretaría, Profesional Médico y Gerencia-->
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Turnos</a>
+                                        <div class="dropdown-menu">
+                                            <a href="{% url 'turnosindex' %}" class="dropdown-item">Ver Turnos</a>
+                                            <a href="{% url 'turnoscreate' %}" class="dropdown-item">Nuevo Turno</a>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                                {% if request.session.tipousuario_id == 3 or request.session.tipousuario_id == 5 %} <!-- Pedidos: Tipo de Usuarios Ventas y Gerencia-->
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Pedidos</a>
+                                        <div class="dropdown-menu">
+                                            <a href="{% url 'pedidosindex' %}" class="dropdown-item">Ver Pedidos</a>
+                                            <a href="{% url 'pedidoscreate' %}" class="dropdown-item">Nuevo Pedido</a>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                                {% if request.session.tipousuario_id == 3 or request.session.tipousuario_id == 5 %} <!-- Categorías: Tipo de Usuarios Ventas y Gerencia-->
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Categorías</a>
+                                        <div class="dropdown-menu">
+                                            <a href="{% url 'categoriasindex' %}" class="dropdown-item">Ver Categorias</a>
+                                            <a href="{% url 'categoriascreate' %}" class="dropdown-item">Nueva Categoría</a>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                                {% if request.session.tipousuario_id == 3 or request.session.tipousuario_id == 5 %} <!-- Productos: Tipo de Usuarios Ventas y Gerencia-->
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Productos</a>
+                                        <div class="dropdown-menu">
+                                            <a href="{% url 'productosindex' %}" class="dropdown-item">Ver Productos</a>
+                                            <a href="{% url 'productoscreate' %}" class="dropdown-item">Nuevo Producto</a>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                                {% if request.session.tipousuario_id == 5 %} <!-- Reportes: Tipo de Usuario Gerencia-->
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Reportes</a>
                                         <div class="dropdown-menu">

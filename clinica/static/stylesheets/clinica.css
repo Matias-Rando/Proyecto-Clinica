@@ -6,10 +6,9 @@
     display: inline-block;
     border-radius: 8px;
     padding: 1rem;
-    margin: 1rem;
     background-color: #d2d9f8;
     height: auto;
-    width: auto;
+    width: 100%;
 }
 
 .formulario {

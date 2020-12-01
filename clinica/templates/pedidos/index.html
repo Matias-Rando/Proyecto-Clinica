@@ -51,7 +51,9 @@
                 {% endfor %}
             </tbody>
         </table>
-        <a href="{% url 'pedidoscreate' %}" class="btn btn-primary">Nuevo Pedido</a>
+        {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no puede generar pedidos -->
+            <a href="{% url 'pedidoscreate' %}" class="btn btn-primary">Nuevo Pedido</a>
+        {% endif %}
     </div>
     
 {% endblock %}

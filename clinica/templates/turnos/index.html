@@ -89,7 +89,8 @@
                         <td>{{ turno.fecha }}</td>
                         <td>{{ turno.hora }}</td>
                         <td>{{ turno.asistencia.nombre }}</td>
-                        <td style="width: 25%;">
+                        <td style="width: 35%;">
+                            <a href="{% url 'pacienteshow' turno.paciente.id %}" class="btn btn-success btn-sm botones-index">Paciente</a>
                             <a href="{% url 'turnoshow' turno.id %}" class="btn btn-primary btn-sm botones-index">Detalle</a>
                             <a href="{% url 'turnosupdate' turno.id %}" class="btn btn-primary btn-sm botones-index">Modificar</a>
                             <a href="{% url 'turnosdelete' turno.id %}" class="btn btn-danger btn-sm botones-index">Eliminar</a>

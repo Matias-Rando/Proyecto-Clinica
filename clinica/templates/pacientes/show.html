@@ -10,23 +10,28 @@
                 {% endfor %}
             </div>
         {% endif %}
-
-        <h1>Detalle del Paciente</h1>
-        <ul>
-            <li><strong>Nombre:</strong> {{ paciente.nombre }}</li>
-            <li><strong>Apellido:</strong> {{ paciente.apellido }}</li>
-            <li><strong>DNI:</strong> {{ paciente.dni }}</li>
-            <li><strong>Teléfono:</strong> {{ paciente.telefono }}</li>
-            <li><strong>Dirección:</strong> {{ paciente.direccion }}</li>
-            <li><strong>E-Mail:</strong> {{ paciente.email }}</li>
-            <li><strong>Ingresado por:</strong> {{ paciente.user.get_username }}</li>
-        </ul>
-        <a href="{% url 'pacientesindex' %}" class="btn btn-primary">Volver</a>
-
-        {% if request.session.tipousuario_id == 2 or request.session.tipousuario_id == 5 %} <!-- Tipo de Usuarios Taller no puede agregar items al pedido -->
+        <div class="muestra" style="margin-bottom: 1rem;">
+            <h2>Detalle del Paciente</h2>
+            <ul>
+                <li><strong>Nombre:</strong> {{ paciente.nombre }}</li>
+                <li><strong>Apellido:</strong> {{ paciente.apellido }}</li>
+                <li><strong>DNI:</strong> {{ paciente.dni }}</li>
+                <li><strong>Teléfono:</strong> {{ paciente.telefono }}</li>
+                <li><strong>Dirección:</strong> {{ paciente.direccion }}</li>
+                <li><strong>E-Mail:</strong> {{ paciente.email }}</li>
+                <li><strong>Ingresado por:</strong> {{ paciente.user.get_username }}</li>
+            </ul>
+            {% if request.session.tipousuario_id == 1 or request.session.tipousuario_id == 5 %} <!-- Vuelve hacia el index de pacientes -->
+                <a href="{% url 'pacientesindex' %}" class="btn btn-secondary">Volver</a>
+            {% endif %}
+            {% if request.session.tipousuario_id == 2 %} <!-- Vuelve hacia el filtro de turnos -->
+                <a href="{% url 'turnosindex' %}" class="btn btn-secondary">Volver</a>
+            {% endif %}
+        </div>
+        {% if request.session.tipousuario_id == 2 or request.session.tipousuario_id == 5 %} <!-- Solo puede ver el historial médico el tipo usuario médico y la gerencia -->
             {% if historiales %}
 
-                <h1>Historial</h1>
+                <h2>Historial</h2>
         
                 <table class="table table-sm table-striped table-borderless">
                     <thead class="table-dark">
@@ -54,8 +59,8 @@
 
             {% endif %}
             
-            {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no puede agregar items al pedido -->
-                <h1>Añadir Registro al Historial:</h1>
+            <div class="formulario">
+                <h2>Añadir Registro al Historial:</h2>
                 <form action="{% url 'pacienteshow' paciente.id %}" method="post">
                     {% csrf_token %}
                     {{ form }}
@@ -63,7 +68,7 @@
                         <input type="submit", class="btn btn-primary">
                     </div>
                 </form>
-            {% endif %}
+            </div>
         {% endif %}
     </div>
 {% endblock %}

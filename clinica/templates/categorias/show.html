@@ -2,10 +2,12 @@
 
 {% block body %}
     <div class="container">
-        <h1>Detalle de la Categoría</h1>
-        <ul>
-            <li><strong>Nombre:</strong> {{ categoria.nombre }}</li>
-        </ul>
-        <a href="{% url 'categoriasindex' %}" class="btn btn-primary">Volver</a>
+        <div class="muestra">
+            <h2>Detalle de la Categoría</h2>
+            <ul>
+                <li><strong>Nombre:</strong> {{ categoria.nombre }}</li>
+            </ul>
+            <a href="{% url 'categoriasindex' %}" class="btn btn-secondary">Volver</a>
+        </div>
     </div>
 {% endblock %}

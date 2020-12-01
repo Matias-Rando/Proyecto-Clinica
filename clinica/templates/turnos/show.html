@@ -11,21 +11,21 @@
             </div>
         {% endif %}
         <div class="muestra">
-        <h1>Detalle del Turno</h1>
-        <ul>
-            <li><strong>Paciente:</strong> {{ turno.paciente.nombre }} {{ turno.paciente.apellido }}</li>
-            <li><strong>Profesional Médico:</strong> {{ turno.user.get_username }}</li>
-            <li><strong>Fecha:</strong> {{ turno.fecha }}</li>
-            <li><strong>Hora:</strong> {{ turno.hora }}</li>
-            <li><strong>Asistencia:</strong> {{ turno.asistencia.nombre }}</li>
-        </ul>
+            <h2>Detalle del Turno</h2>
+            <ul>
+                <li><strong>Paciente:</strong> {{ turno.paciente.nombre }} {{ turno.paciente.apellido }}</li>
+                <li><strong>Profesional Médico:</strong> {{ turno.user.get_username }}</li>
+                <li><strong>Fecha:</strong> {{ turno.fecha }}</li>
+                <li><strong>Hora:</strong> {{ turno.hora }}</li>
+                <li><strong>Asistencia:</strong> {{ turno.asistencia.nombre }}</li>
+            </ul>
 
-        <a href="{% url 'turnosindex' %}" class="btn btn-primary">Volver</a>
+            <a href="{% url 'turnosindex' %}" class="btn btn-secondary">Volver</a>
 
-        {% if request.session.tipousuario_id == 2 %} <!-- Solo puede cambiar el estado de asistencia el Tipo de Usuarios Médico -->
-            <a href="{% url 'turnoasistencia' turno.id 2 %}" class="btn btn-success">Cambiar Estado a Si Asistió</a>
-            <a href="{% url 'turnoasistencia' turno.id 3 %}" class="btn btn-danger">Cambiar Estado a No Asistió</a>
-        {% endif %}
-    </div>
+            {% if request.session.tipousuario_id == 2 or request.session.tipousuario_id == 5 %} <!-- Solo puede cambiar el estado de asistencia el Tipo de Usuarios Médico y Gerencia -->
+                <a href="{% url 'turnoasistencia' turno.id 2 %}" class="btn btn-success">Cambiar Estado a Si Asistió</a>
+                <a href="{% url 'turnoasistencia' turno.id 3 %}" class="btn btn-danger">Cambiar Estado a No Asistió</a>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

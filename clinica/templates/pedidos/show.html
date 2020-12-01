@@ -10,34 +10,38 @@
                 {% endfor %}
             </div>
         {% endif %}
+        
+        <div class="muestra" style="margin-bottom: 1rem;">
+            <h2>Detalle del Pedido</h2>
+            <ul>
+                <li><strong>N°:</strong> {{pedido.id }}</li>
+                <li><strong>Fecha de Entrega:</strong> {{ pedido.fechaentrega }}</li>
+                <li><strong>Vendedor:</strong> {{ pedido.user.get_username }}</li>
+                <li><strong>Paciente:</strong> {{ pedido.paciente.nombre }}</li>
+                <li><strong>Estado:</strong> {{ pedido.estado.nombre }}</li>
+                {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no visualizan los precios -->
+                    <li><strong>Total:</strong> {{ pedido.total }}$</li>
+                {% endif %}
+                <li><strong>Tipo de Pago:</strong> {{ pedido.tipopago.nombre }}</li>
+                <li><strong>Creado:</strong> {{ pedido.created_at }}</li>
+            </ul>
 
-        <h1>Detalle del Pedido</h1>
-        <ul>
-            <li><strong>N°:</strong> {{pedido.id }}</li>
-            <li><strong>Fecha de Entrega:</strong> {{ pedido.fechaentrega }}</li>
-            <li><strong>Vendedor:</strong> {{ pedido.user.get_username }}</li>
-            <li><strong>Paciente:</strong> {{ pedido.paciente.nombre }}</li>
-            <li><strong>Estado:</strong> {{ pedido.estado.nombre }}</li>
-            {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no visualizan los precios -->
-                <li><strong>Total:</strong> {{ pedido.total }}$</li>
+            <a href="{% url 'pedidosindex' %}" class="btn btn-secondary">Volver</a>
+
+            {% if request.session.tipousuario_id == 3 or request.session.tipousuario_id == 5 %} <!-- Tipo de Usuarios Ventas y Gerencia-->
+                <a href="{% url 'pedidosupdate' pedido.id %}" class="btn btn-primary">Modificar Datos del Pedido</a>
+                <a href="{% url 'pedidoestado' pedido.id 2 %}" class="btn btn-success">Cambiar Estado a Pedido</a>
+                <a href="{% url 'pedidoestado' pedido.id 3 %}" class="btn btn-success">Cambiar Estado a Taller</a>
             {% endif %}
-            <li><strong>Tipo de Pago:</strong> {{ pedido.tipopago.nombre }}</li>
-            <li><strong>Creado:</strong> {{ pedido.created_at }}</li>
-        </ul>
 
-        {% if request.session.tipousuario_id == 3 or request.session.tipousuario_id == 5 %} <!-- Tipo de Usuarios Ventas-->
-            <a href="{% url 'pedidosupdate' pedido.id %}" class="btn btn-primary">Modificar Datos del Pedido</a>
-            <a href="{% url 'pedidoestado' pedido.id 2 %}" class="btn btn-success">Cambiar Estado a Pedido</a>
-            <a href="{% url 'pedidoestado' pedido.id 3 %}" class="btn btn-success">Cambiar Estado a Taller</a>
-        {% endif %}
-
-        {% if request.session.tipousuario_id == 4 %} <!-- Tipo de Usuarios Taller-->
-            <a href="{% url 'pedidoestado' pedido.id 4 %}" class="btn btn-success">Cambiar Estado a Finalizado</a>
-        {% endif %}
+            {% if request.session.tipousuario_id == 4 or request.session.tipousuario_id == 5 %} <!-- Tipo de Usuarios Taller y Gerencia-->
+                <a href="{% url 'pedidoestado' pedido.id 4 %}" class="btn btn-success">Cambiar Estado a Finalizado</a>
+            {% endif %}
+        </div>
 
         {% if items %}
 
-            <h1>Items</h1>
+            <h2>Items</h2>
     
             <table class="table table-sm table-striped table-borderless">
                 <thead class="table-dark">
@@ -81,21 +85,22 @@
 
         {% endif %}
         
-        {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no puede agregar items al pedido -->
-            <h1>Cargar Item:</h1>
-            <form action="{% url 'pedidoshow' pedido.id %}" method="post">
-                {% csrf_token %}
-                {{ form }}
-                <div class="form-group" style="margin-top: 1rem;">
-                    <input type="submit", class="btn btn-primary">
-                </div>
-            </form>
+        {% if request.session.tipousuario_id == 3 or request.session.tipousuario_id == 5 %} <!-- Tipo de Usuarios Ventas y Gerencia-->
+            <div class="formulario">
+                <h2>Cargar Item:</h2>
+                <form action="{% url 'pedidoshow' pedido.id %}" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <input type="submit", class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
         {% endif %}
 
-        <a href="{% url 'pedidosindex' %}" class="btn btn-primary">Volver</a>
     </div>
 
-    {% if request.session.tipousuario_id != 4 %} <!-- Tipo de Usuarios Taller no puede agregar items al pedido -->
+    {% if request.session.tipousuario_id == 3 or request.session.tipousuario_id == 5 %} <!-- Tipo de Usuarios Ventas y Gerencia-->
         <script>
             // Esperamos a que se cargue el DOM
             document.addEventListener('DOMContentLoaded', function() {

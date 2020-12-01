@@ -2,13 +2,15 @@
 
 {% block body %}
     <div class="container">
-        <h1>Detalle del Producto</h1>
-        <ul>
-            <li><strong>Nombre:</strong> {{ producto.nombre }}</li>
-            <li><strong>Categoría:</strong> {{ producto.categoria.nombre }}</li>
-            <li><strong>Precio:</strong> {{ producto.precio }}</li>
-            <li><strong>Detalle:</strong> {{ producto.detalle }}</li>
-        </ul>
-        <a href="{% url 'productosindex' %}" class="btn btn-primary">Volver</a>
+        <div class="muestra">
+            <h2>Detalle del Producto</h2>
+            <ul>
+                <li><strong>Nombre:</strong> {{ producto.nombre }}</li>
+                <li><strong>Categoría:</strong> {{ producto.categoria.nombre }}</li>
+                <li><strong>Precio:</strong> {{ producto.precio }}</li>
+                <li><strong>Detalle:</strong> {{ producto.detalle }}</li>
+            </ul>
+            <a href="{% url 'productosindex' %}" class="btn btn-secondary">Volver</a>
+        </div>
     </div>
 {% endblock %}
