@@ -648,7 +648,8 @@ def reportepacientespedidos(request, rango):
         fechaInicial = hoy - timedelta(days=7) # Una semana de rango
     if rango == 2:
          fechaInicial = hoy - timedelta(days=30) # Un mes de rango
-    pedidos = Pedido.objects.filter(created_at__range=(fechaInicial, hoy))
+    incluirhoy = hoy + timedelta(days=1) # Sumamos un día para que el resultado incluya los pedidos del día
+    pedidos = Pedido.objects.filter(created_at__range=(fechaInicial, incluirhoy))
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)
     worksheet = workbook.add_worksheet()
