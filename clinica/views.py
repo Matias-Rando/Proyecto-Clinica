@@ -690,7 +690,8 @@ def reportepacientespedidos(request, rango):
 def reporteproductos(request):
     hoy = date.today()
     fechaInicial = hoy - timedelta(days=30) # Un mes de rango
-    pedidos = Pedido.objects.filter(created_at__range=(fechaInicial, hoy))
+    incluirhoy = hoy + timedelta(days=1) # Sumamos un día para que el resultado incluya los pedidos del día
+    pedidos = Pedido.objects.filter(created_at__range=(fechaInicial, incluirhoy))
     productos = Producto.objects.all()
     ultimoProducto = Producto.objects.last()
     total = [0] * ultimoProducto.id
@@ -739,7 +740,8 @@ def reporteproductos(request):
 def reporteventas(request):
     hoy = date.today()
     fechaInicial = hoy - timedelta(days=30) # Un mes de rango
-    pedidos = Pedido.objects.filter(created_at__range=(fechaInicial, hoy))
+    incluirhoy = hoy + timedelta(days=1) # Sumamos un día para que el resultado incluya los pedidos del día
+    pedidos = Pedido.objects.filter(created_at__range=(fechaInicial, incluirhoy))
     ususventas = User.objects.filter(groups__name='Ventas')
     dimension = ususventas.count()
     total = [0] * dimension
