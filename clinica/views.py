@@ -87,7 +87,7 @@ def pacientesdelete(request, paciente_id):
 
     Paciente.objects.get(id=paciente_id).delete()
     messages.success(request, 'El Paciente fue Eliminado Exitosamente')
-    return HttpResponseRedirect(reverse("turnosindex"))
+    return HttpResponseRedirect(reverse("pacientesindex"))
 
 def pacienteshow(request, paciente_id):
      # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
