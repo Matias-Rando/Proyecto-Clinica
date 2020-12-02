@@ -4,3 +4,12 @@
 - El archivo de base de datos sqlite se encuentra incluido en el Proyecto.
 - Para la generación de reportes en excel se utiliza XlsxWriter por lo que es necesario instalarlo con:
     pip install XlsxWriter
+- Los modelos usuarios, grupos de usuarios, armazon, lado, distancia, estados, tipopago y asistencia son gestionados por la herramienta admin de django.
+- Los usuarios generados para las pruebas son los siguientes:
+    - Secretaría: Juan
+    - Profesional Médico: Alberto y Graciela
+    - Ventas: Felipe y Raul
+    - Taller: Marcelo
+    - Gerencia: Simon
+    - La contraseña para todos ellos es la misma: juan1234
+- El superusario de django admin es Matias y la contraseña es 33275799
