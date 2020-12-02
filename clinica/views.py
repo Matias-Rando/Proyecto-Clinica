@@ -23,7 +23,7 @@ class FormPaciente(forms.Form):
 
 class FormHistorial(forms.Form):
     titulo = forms.CharField(label="Título:", widget=forms.TextInput(attrs={'class':'form-control'}))
-    detalle = forms.CharField(label="Apellido:", widget=forms.Textarea(attrs={'class':'form-control'}))
+    detalle = forms.CharField(label="Detalle:", widget=forms.Textarea(attrs={'class':'form-control'}))
 
 def pacientescargar(request):
     # Rechazamos acceso y derivamos a la pantalla de login si no hay un usuario autenticado
